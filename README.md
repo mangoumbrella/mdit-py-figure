@@ -115,6 +115,12 @@ In case a link to an image doesn't have a caption (a line of text following it w
 
 See `test_skip_no_caption_option()` in [`tests/test_figure.py`](/tests/test_figure.py) for an example.
 
+# Changelog
+
+## v1.0.0 (2025-12-27)
+
+* Initial release - Python port of [goldmark-figure](https://github.com/mangoumbrella/goldmark-figure)
+
 # LICENSE
 
 Apache-2.0
