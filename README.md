@@ -49,7 +49,7 @@ with descriptions much easier.
 [Here](https://mangobaby.app/parenting-tips/how-to-burp-a-newborn) is an
 example:
 
-![Example of an HTML figure with figcaption.](/assets/example.png)
+![Example of an HTML figure with figcaption.](https://raw.githubusercontent.com/mangoumbrella/mdit-py-figure/main/assets/example.png)
 
 I hear they are also good for SEO.
 
@@ -101,7 +101,7 @@ Render result:
 </figure>
 ```
 
-See [`tests/test_figure.py`](/tests/test_figure.py) for more examples.
+See [`tests/test_figure.py`](https://github.com/mangoumbrella/mdit-py-figure/blob/main/tests/test_figure.py) for more examples.
 
 ## Option to skip images without captions
 
@@ -113,7 +113,7 @@ md = MarkdownIt().use(figure_plugin, skip_no_caption=True)
 
 In case a link to an image doesn't have a caption (a line of text following it without any linebreaks in between), it won't be wrapped in a `<figure>`.
 
-See `test_skip_no_caption_option()` in [`tests/test_figure.py`](/tests/test_figure.py) for an example.
+See `test_skip_no_caption_option()` in [`tests/test_figure.py`](https://github.com/mangoumbrella/mdit-py-figure/blob/main/tests/test_figure.py) for an example.
 
 # LICENSE
 
