@@ -10,10 +10,12 @@ def test_single_image_with_caption():
     md = MarkdownIt().use(figure_plugin)
     html = md.render("![Picture of Oscar.](/path/to/cat.jpg)\nAwesome caption.")
 
-    assert "<figure>" in html
-    assert '<img src="/path/to/cat.jpg" alt="Picture of Oscar."' in html
-    assert "<figcaption>Awesome caption.</figcaption>" in html
-    assert "</figure>" in html
+    assert html == """\
+<figure>
+<img src="/path/to/cat.jpg" alt="Picture of Oscar." />
+<figcaption><p>Awesome caption.</p></figcaption>
+</figure>
+"""
 
 
 def test_single_image_with_caption_and_bold():
@@ -23,11 +25,12 @@ def test_single_image_with_caption_and_bold():
         "![Picture of Oscar.](/path/to/cat.jpg)\nAwesome caption about **Oscar** the kitty."
     )
 
-    assert "<figure>" in html
-    assert (
-        "<figcaption>Awesome caption about <strong>Oscar</strong> the kitty.</figcaption>"
-        in html
-    )
+    assert html == """\
+<figure>
+<img src="/path/to/cat.jpg" alt="Picture of Oscar." />
+<figcaption><p>Awesome caption about <strong>Oscar</strong> the kitty.</p></figcaption>
+</figure>
+"""
 
 
 def test_multiple_images_with_caption():
@@ -40,16 +43,14 @@ def test_multiple_images_with_caption():
         "Awesome captions about the **kitties**."
     )
 
-    assert html.count("<figure>") == 1
-    assert html.count("</figure>") == 1
-    assert html.count("<img") == 3
-    assert '<img src="/path/to/cat1.jpg" alt="Picture of Oscar."' in html
-    assert '<img src="/path/to/cat2.jpg" alt="Picture of Luna."' in html
-    assert '<img src="/path/to/cat3.jpg" alt="Picture of Oreo."' in html
-    assert (
-        "<figcaption>Awesome captions about the <strong>kitties</strong>.</figcaption>"
-        in html
-    )
+    assert html == """\
+<figure>
+<img src="/path/to/cat1.jpg" alt="Picture of Oscar." />
+<img src="/path/to/cat2.jpg" alt="Picture of Luna." />
+<img src="/path/to/cat3.jpg" alt="Picture of Oreo." />
+<figcaption><p>Awesome captions about the <strong>kitties</strong>.</p></figcaption>
+</figure>
+"""
 
 
 def test_single_image_no_caption():
@@ -57,10 +58,10 @@ def test_single_image_no_caption():
     md = MarkdownIt().use(figure_plugin)
     html = md.render("![Alt text](https://example.com/image.jpg)")
 
-    assert "<figure>" in html
-    assert '<img src="https://example.com/image.jpg" alt="Alt text"' in html
-    assert "<figcaption>" not in html
-    assert "</figure>" in html
+    assert html == """\
+<figure>
+<img src="https://example.com/image.jpg" alt="Alt text" /></figure>
+"""
 
 
 def test_skip_no_caption_option():
@@ -69,9 +70,9 @@ def test_skip_no_caption_option():
     html = md.render("![Alt text](https://example.com/image.jpg)")
 
     # Should NOT be transformed to figure
-    assert "<figure>" not in html
-    assert "<p>" in html
-    assert '<img src="https://example.com/image.jpg" alt="Alt text"' in html
+    assert html == """\
+<p><img src="https://example.com/image.jpg" alt="Alt text" /></p>
+"""
 
 
 def test_skip_no_caption_with_caption():
@@ -80,8 +81,12 @@ def test_skip_no_caption_with_caption():
     html = md.render("![Alt](img.jpg)\nCaption here")
 
     # Should be transformed since caption exists
-    assert "<figure>" in html
-    assert "<figcaption>Caption here</figcaption>" in html
+    assert html == """\
+<figure>
+<img src="img.jpg" alt="Alt" />
+<figcaption><p>Caption here</p></figcaption>
+</figure>
+"""
 
 
 def test_image_link_option():
@@ -89,11 +94,12 @@ def test_image_link_option():
     md = MarkdownIt().use(figure_plugin, image_link=True)
     html = md.render("![alt](image.png)\nCaption")
 
-    assert "<figure>" in html
-    assert '<a href="image.png">' in html
-    assert '<img src="image.png" alt="alt"' in html
-    assert "</a>" in html
-    assert "<figcaption>Caption</figcaption>" in html
+    assert html == """\
+<figure>
+<a href="image.png"><img src="image.png" alt="alt" /></a>
+<figcaption><p>Caption</p></figcaption>
+</figure>
+"""
 
 
 def test_image_link_multiple_images():
@@ -101,10 +107,13 @@ def test_image_link_multiple_images():
     md = MarkdownIt().use(figure_plugin, image_link=True)
     html = md.render("![a](1.png)\n![b](2.png)\nCaption")
 
-    assert '<a href="1.png">' in html
-    assert '<a href="2.png">' in html
-    assert html.count('<a href="') == 2
-    assert html.count("</a>") == 2
+    assert html == """\
+<figure>
+<a href="1.png"><img src="1.png" alt="a" /></a>
+<a href="2.png"><img src="2.png" alt="b" /></a>
+<figcaption><p>Caption</p></figcaption>
+</figure>
+"""
 
 
 def test_image_in_middle_not_transformed():
@@ -112,10 +121,9 @@ def test_image_in_middle_not_transformed():
     md = MarkdownIt().use(figure_plugin)
     html = md.render("Text before ![img](a.png) and after")
 
-    assert "<figure>" not in html
-    assert "<p>Text before" in html
-    assert '<img src="a.png" alt="img"' in html
-    assert "and after</p>" in html
+    assert html == """\
+<p>Text before <img src="a.png" alt="img" /> and after</p>
+"""
 
 
 def test_image_at_end_not_transformed():
@@ -126,8 +134,10 @@ def test_image_at_end_not_transformed():
     )
 
     # Image not at start, should not be transformed
-    assert "<figure>" not in html
-    assert "<p>Following image is in the middle:" in html
+    assert html == """\
+<p>Following image is in the middle:
+<img src="https://example.com/image.jpg" alt="Alt text" /></p>
+"""
 
 
 def test_regular_link_not_transformed():
@@ -135,8 +145,9 @@ def test_regular_link_not_transformed():
     md = MarkdownIt().use(figure_plugin)
     html = md.render("[not an image](https://example.com)")
 
-    assert "<figure>" not in html
-    assert '<a href="https://example.com">not an image</a>' in html
+    assert html == """\
+<p><a href="https://example.com">not an image</a></p>
+"""
 
 
 def test_caption_with_formatting():
@@ -146,10 +157,12 @@ def test_caption_with_formatting():
         "![img](a.png)\nCaption with **bold** and *italic* and [link](url)"
     )
 
-    assert (
-        '<figcaption>Caption with <strong>bold</strong> and <em>italic</em> and <a href="url">link</a></figcaption>'
-        in html
-    )
+    assert html == """\
+<figure>
+<img src="a.png" alt="img" />
+<figcaption><p>Caption with <strong>bold</strong> and <em>italic</em> and <a href="url">link</a></p></figcaption>
+</figure>
+"""
 
 
 def test_multiple_paragraphs_separate():
@@ -158,10 +171,16 @@ def test_multiple_paragraphs_separate():
     text = "![a](1.png)\nCap1\n\n![b](2.png)\nCap2"
     html = md.render(text)
 
-    assert html.count("<figure>") == 2
-    assert html.count("</figure>") == 2
-    assert "<figcaption>Cap1</figcaption>" in html
-    assert "<figcaption>Cap2</figcaption>" in html
+    assert html == """\
+<figure>
+<img src="1.png" alt="a" />
+<figcaption><p>Cap1</p></figcaption>
+</figure>
+<figure>
+<img src="2.png" alt="b" />
+<figcaption><p>Cap2</p></figcaption>
+</figure>
+"""
 
 
 def test_image_with_title():
@@ -169,9 +188,12 @@ def test_image_with_title():
     md = MarkdownIt().use(figure_plugin)
     html = md.render('![alt](img.png "Title")\nCaption')
 
-    assert "<figure>" in html
-    assert 'title="Title"' in html
-    assert '<img src="img.png" alt="alt"' in html
+    assert html == """\
+<figure>
+<img src="img.png" alt="alt" title="Title" />
+<figcaption><p>Caption</p></figcaption>
+</figure>
+"""
 
 
 def test_empty_alt_text():
@@ -179,9 +201,12 @@ def test_empty_alt_text():
     md = MarkdownIt().use(figure_plugin)
     html = md.render("![](img.png)\nCaption")
 
-    assert "<figure>" in html
-    assert '<img src="img.png" alt=""' in html
-    assert "<figcaption>Caption</figcaption>" in html
+    assert html == """\
+<figure>
+<img src="img.png" alt="" />
+<figcaption><p>Caption</p></figcaption>
+</figure>
+"""
 
 
 def test_two_images_no_caption():
@@ -189,9 +214,11 @@ def test_two_images_no_caption():
     md = MarkdownIt().use(figure_plugin)
     html = md.render("![a](1.png)\n![b](2.png)")
 
-    assert "<figure>" in html
-    assert html.count("<img") == 2
-    assert "<figcaption>" not in html
+    assert html == """\
+<figure>
+<img src="1.png" alt="a" />
+<img src="2.png" alt="b" /></figure>
+"""
 
 
 def test_combination_options():
@@ -200,10 +227,15 @@ def test_combination_options():
 
     # Image without caption - should NOT transform
     html1 = md.render("![a](1.png)")
-    assert "<figure>" not in html1
+    assert html1 == """\
+<p><img src="1.png" alt="a" /></p>
+"""
 
     # Image with caption - should transform with links
     html2 = md.render("![a](1.png)\nCaption")
-    assert "<figure>" in html2
-    assert '<a href="1.png">' in html2
-    assert "<figcaption>Caption</figcaption>" in html2
+    assert html2 == """\
+<figure>
+<a href="1.png"><img src="1.png" alt="a" /></a>
+<figcaption><p>Caption</p></figcaption>
+</figure>
+"""

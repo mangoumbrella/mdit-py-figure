@@ -119,7 +119,7 @@ See `test_skip_no_caption_option()` in [`tests/test_figure.py`](https://github.c
 
 ## [Unreleased]
 
-Nothing noticeable unreleased.
+* Fix a bug where `<p>` tags were missing inside `<figcaption>`.
 
 ## v1.0.1 (2025-12-27)
 

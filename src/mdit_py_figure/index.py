@@ -251,7 +251,7 @@ def render_figure_caption_open(
     env: EnvType,
 ) -> str:
     """Render opening figcaption tag."""
-    return "<figcaption>"
+    return "<figcaption><p>"
 
 
 def render_figure_caption_close(
@@ -262,4 +262,4 @@ def render_figure_caption_close(
     env: EnvType,
 ) -> str:
     """Render closing figcaption tag."""
-    return "</figcaption>\n"
+    return "</p></figcaption>\n"
